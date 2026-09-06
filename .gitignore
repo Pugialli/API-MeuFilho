@@ -4,3 +4,4 @@ dist/
 *.log
 .neon
 .env.local
+package-lock.json

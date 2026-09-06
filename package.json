@@ -1,5 +1,5 @@
 {
-  "name": "meufilho",
+  "name": "meufilho-db",
   "version": "1.0.0",
   "description": "API de acompanhamento de gestação e bebê",
   "main": "dist/server.js",
@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "packageManager": "pnpm@10.30.2",
   "dependencies": {
     "@fastify/cookie": "^11.1.2",
     "@fastify/jwt": "^10.2.2",
@@ -47,5 +48,8 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@prisma/engines", "argon2", "esbuild", "prisma"]
   }
 }

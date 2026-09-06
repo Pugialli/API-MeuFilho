@@ -1,70 +1,98 @@
 # MeuFilho API
 
-API backend para acompanhamento de gestação e bebê, compartilhada entre dois responsáveis.
+API backend para acompanhamento de **gestação e desenvolvimento do bebê**, compartilhada entre dois responsáveis.
+
+---
+
+## Equipe
+
+| Papel | Nome |
+|---|---|
+| Desenvolvimento | João Paulo Pugialli da Silva Souza |
+
+---
+
+## Sobre o projeto
+
+API REST para o app MeuFilho, permitindo que dois responsáveis (pai, mãe ou qualquer combinação) acompanhem juntos a gestação e o crescimento do bebê.
+
+- **Autenticação** com JWT (access token + refresh token) e senhas com hash Argon2
+- **Filhos compartilhados** via código de convite — o segundo responsável entra com o código e passa a ter acesso completo
+- **Medições independentes** — peso, altura e BPM são registros separados, cada um com data própria
+
+---
 
 ## Stack
 
-- **Fastify** + TypeScript
-- **Prisma ORM** com PostgreSQL (Neon)
-- **JWT** (access token 15min + refresh token 7 dias)
-- **Argon2** para hash de senha
-- **Zod** para validação de payloads
+| Camada | Tecnologia |
+|---|---|
+| Framework | Fastify 5 (TypeScript) |
+| ORM | Prisma v7 |
+| Banco de dados | PostgreSQL (Neon) |
+| Autenticação | JWT (`@fastify/jwt` + `jsonwebtoken`) |
+| Hash de senha | Argon2 |
+| Validação | Zod + `fastify-type-provider-zod` |
+| Runtime | Node.js 20+ |
 
-## Pré-requisitos
+---
+
+## Requisitos
 
 - Node.js 20+
-- Conta no [Neon](https://neon.tech) (PostgreSQL serverless)
+- pnpm
 
-## Como rodar localmente
+---
 
-### 1. Instalar dependências
+## Variáveis de ambiente
 
-```bash
-npm install
-```
-
-### 2. Configurar variáveis de ambiente
-
-```bash
-cp .env.example .env
-```
-
-Edite `.env` com suas credenciais do Neon:
+Crie um arquivo `.env.local` na raiz com as seguintes variáveis:
 
 ```env
-# No painel do Neon, vá em Connection Details
-# Use a connection string "Pooled" para DATABASE_URL
-# e a "Direct" para DATABASE_URL_UNPOOLED
-DATABASE_URL="postgresql://user:pass@ep-xxx.pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
-DATABASE_URL_UNPOOLED="postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb?sslmode=require"
+# Banco de dados (Neon PostgreSQL)
+# Use a URL "Pooled" para queries e "Direct" para migrations
+DATABASE_URL=
+DATABASE_URL_UNPOOLED=
 
-JWT_SECRET="gere-com-openssl-rand-base64-32"
-JWT_REFRESH_SECRET="outro-segredo-diferente"
+# JWT
+JWT_SECRET=
+JWT_REFRESH_SECRET=
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Servidor
+PORT=3000
+NODE_ENV=development
 ```
 
-> **Por que dois URLs?** O Neon usa connection pooling (PgBouncer) — Prisma precisa da URL "Direct" (sem pool) para rodar migrations, e a "Pooled" para queries em produção.
+> **Por que dois DATABASE_URL?** O Neon usa connection pooling (PgBouncer). O Prisma precisa da URL direta (`UNPOOLED`) para rodar migrations e a URL pooled para queries em produção.
 
-### 3. Rodar migrations
+---
+
+## Instalação e uso
 
 ```bash
-npm run db:migrate
+# Instalar dependências
+pnpm install
+
+# Gerar cliente Prisma
+pnpm dlx prisma generate
+
+# Rodar migrations
+pnpm db:migrate
+
+# Rodar em desenvolvimento (hot reload)
+pnpm dev
+
+# Build de produção
+pnpm build
+pnpm start
+
+# Seed do banco (cria 2 usuários e 1 filho de exemplo)
+pnpm db:seed
+
+# Abrir Prisma Studio
+pnpm db:studio
 ```
-
-### 4. (Opcional) Popular banco com dados de teste
-
-```bash
-npm run db:seed
-# Cria: mae@exemplo.com e pai@exemplo.com com senha "senha123"
-```
-
-### 5. Iniciar servidor
-
-```bash
-npm run dev        # modo desenvolvimento (hot reload)
-npm run build && npm start  # modo produção
-```
-
-O servidor sobe em `http://localhost:3000`.
 
 ---
 
@@ -73,128 +101,55 @@ O servidor sobe em `http://localhost:3000`.
 ### Autenticação
 
 | Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/auth/signup` | Criar conta |
-| POST | `/auth/login` | Login (retorna tokens) |
-| POST | `/auth/refresh` | Renovar access token |
-
-**Signup**
-```json
-POST /auth/signup
-{
-  "name": "Ana Lima",
-  "email": "ana@email.com",
-  "password": "minhasenha123",
-  "role": "MAE"
-}
-```
-
-**Login**
-```json
-POST /auth/login
-{ "email": "ana@email.com", "password": "minhasenha123" }
-
-// Resposta:
-{ "data": { "accessToken": "...", "refreshToken": "...", "user": { ... } } }
-```
-
-**Refresh**
-```json
-POST /auth/refresh
-{ "refreshToken": "..." }
-```
-
----
+|---|---|---|
+| POST | `/auth/signup` | Criar conta (`name`, `email`, `password`, `role: PAI\|MAE`) |
+| POST | `/auth/login` | Login — retorna `accessToken` + `refreshToken` |
+| POST | `/auth/refresh` | Renovar access token via `refreshToken` |
 
 ### Filhos
 
-Todas as rotas requerem `Authorization: Bearer <accessToken>`.
+Requerem `Authorization: Bearer <accessToken>`.
 
 | Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/children` | Criar filho (gera inviteCode) |
-| POST | `/children/join` | Entrar como responsável via código |
-| GET | `/children` | Listar filhos do usuário |
-
-**Criar filho**
-```json
-POST /children
-{ "name": "Bebê Lima", "dueDate": "2026-03-15T00:00:00Z" }
-
-// Resposta inclui inviteCode — compartilhe com o parceiro
-```
-
-**Entrar com código de convite**
-```json
-POST /children/join
-{ "inviteCode": "XKPQ7MNR" }
-```
-
----
+|---|---|---|
+| POST | `/children` | Criar filho — gera `inviteCode` automaticamente |
+| POST | `/children/join` | Entrar como responsável usando `inviteCode` |
+| GET | `/children` | Listar filhos do usuário autenticado |
 
 ### Medições
 
 | Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/children/:childId/measurements` | Registrar medição |
-| GET | `/children/:childId/measurements` | Listar medições (filtros opcionais) |
+|---|---|---|
+| POST | `/children/:childId/measurements` | Registrar medição (`type: WEIGHT\|HEIGHT\|BPM`, `value`, `date`) |
+| GET | `/children/:childId/measurements` | Listar medições (filtros: `?type=&from=&to=`) |
 | DELETE | `/measurements/:id` | Deletar medição |
-
-**Registrar medição** (campos obrigatórios: `type`, `value`, `date`)
-```json
-POST /children/clxxx.../measurements
-{
-  "type": "WEIGHT",
-  "value": 3500,
-  "date": "2026-01-20"
-}
-```
-
-Tipos disponíveis: `WEIGHT` (g), `HEIGHT` (cm), `BPM` (bpm).  
-Cada medição é independente — pode registrar só o peso, só a altura, etc.
-
-**Listar com filtros**
-```
-GET /children/:childId/measurements?type=WEIGHT&from=2026-01-01&to=2026-01-31
-```
 
 ---
 
-## Estrutura do projeto
+## Versionamento
 
-```
-src/
-├── plugins/
-│   ├── auth.ts        # Plugin JWT + decorator authenticate
-│   └── prisma.ts      # Plugin Prisma (singleton conectado ao Fastify)
-├── routes/
-│   ├── auth.ts        # POST /auth/*
-│   ├── children.ts    # CRUD /children
-│   └── measurements.ts # CRUD /measurements
-├── services/
-│   ├── auth.service.ts
-│   ├── children.service.ts
-│   └── measurements.service.ts
-├── schemas/
-│   ├── auth.schema.ts
-│   ├── children.schema.ts
-│   └── measurements.schema.ts
-└── server.ts          # Bootstrap Fastify
-prisma/
-├── schema.prisma
-└── seed.ts
-```
+Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATCH`
 
-## Erros padronizados
+- **MAJOR** — mudanças que quebram compatibilidade (breaking changes, grandes migrações)
+- **MINOR** — novas funcionalidades sem quebrar o que existe
+- **PATCH** — correções de bugs e ajustes menores
 
-```json
-// Erro de validação (422)
-{
-  "error": "Validation Error",
-  "message": "Dados inválidos",
-  "issues": [{ "path": "email", "message": "Email inválido" }]
-}
+---
 
-// Erros de negócio (400/401/403/404/409)
-{ "error": "...", "message": "Descrição legível" }
-```
+## Changelog
+
+### v1.0.0 — Estrutura inicial da API
+> Setembro 2026
+
+- Setup do projeto com Fastify 5, Prisma 7 e TypeScript
+- Schema: `User`, `Child`, `ChildMembership`, `Measurement`, `RefreshToken`
+- Autenticação com JWT (access token 15min + refresh token 7 dias), senha com Argon2
+- Endpoint de signup, login e refresh de token
+- CRUD de filhos com geração de `inviteCode` via nanoid
+- Sistema de convite: segundo responsável entra com código e obtém acesso completo
+- Medições independentes por tipo (WEIGHT, HEIGHT, BPM) com filtro por tipo e intervalo de datas
+- Controle de acesso via `ChildMembership` em todas as rotas de filhos e medições
+- Validação de payloads com Zod em todas as rotas
+- Error handler global com respostas JSON padronizadas
+- Seed com dois usuários e um filho de exemplo
+- Configuração do Prisma 7 com adapter Neon (`prisma.config.ts`)
