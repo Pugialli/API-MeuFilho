@@ -138,6 +138,13 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 
 ## Changelog
 
+### v1.0.5 — CORS
+> Setembro 2026
+
+- Adicionado `@fastify/cors` — necessário para o Swagger UI conseguir fazer requests ao servidor a partir do browser
+
+---
+
 ### v1.0.4 — Fix: adapter Neon no seed
 > Setembro 2026
 

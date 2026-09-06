@@ -1,6 +1,6 @@
 {
   "name": "meufilho-db",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "API de acompanhamento de gestação e bebê",
   "main": "dist/server.js",
   "scripts": {
@@ -20,6 +20,7 @@
   "packageManager": "pnpm@10.30.2",
   "dependencies": {
     "@fastify/cookie": "^11.1.2",
+    "@fastify/cors": "^11.3.0",
     "@fastify/jwt": "^10.2.2",
     "@fastify/swagger": "^9.8.1",
     "@fastify/swagger-ui": "^6.1.1",

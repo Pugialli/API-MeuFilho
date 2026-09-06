@@ -3,6 +3,7 @@ import Fastify, { FastifyError } from 'fastify'
 import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod'
 import { ZodError } from 'zod'
 
+import fastifyCors from '@fastify/cors'
 import prismaPlugin from './plugins/prisma.js'
 import authPlugin from './plugins/auth.js'
 import swaggerPlugin from './plugins/swagger.js'
@@ -43,6 +44,7 @@ fastify.setErrorHandler((error, _request, reply) => {
 })
 
 async function bootstrap() {
+  await fastify.register(fastifyCors, { origin: true })
   await fastify.register(prismaPlugin)
   await fastify.register(authPlugin)
   await fastify.register(swaggerPlugin)
