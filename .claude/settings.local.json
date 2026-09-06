@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(npm audit *)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); Object.values\\(j.vulnerabilities||{}\\).forEach\\(v=>console.log\\(v.severity, v.name, v.via?.map?.\\(x=>typeof x==='string'?x:x.title\\)?.join\\(', '\\)\\)\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); pkgs=['fastify-plugin','dotenv','pino-pretty']; [print\\(p, d['packages'].get\\('node_modules/'+p,{}\\).get\\('version','NOT FOUND'\\)\\) for p in pkgs]\")",
+      "Bash(npx prisma *)",
+      "Bash(npx tsc *)",
+      "Bash(node -e \"require\\('jsonwebtoken'\\); console.log\\('ok'\\)\")",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git status *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(pnpm --version)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
