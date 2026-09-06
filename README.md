@@ -138,6 +138,17 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 
 ## Changelog
 
+### v1.0.3 — Documentação Swagger
+> Setembro 2026
+
+- Adicionados `@fastify/swagger` e `@fastify/swagger-ui`
+- Documentação disponível em `/documentation` com interface Swagger UI
+- Rotas agrupadas por tags: **Auth**, **Filhos** e **Medições**
+- Rotas autenticadas marcadas com `bearerAuth` — campo de token disponível diretamente na UI
+- Integração com `jsonSchemaTransform` do `fastify-type-provider-zod` para geração automática de schemas a partir do Zod
+
+---
+
 ### v1.0.2 — Fix: conexão para migrations
 > Setembro 2026
 

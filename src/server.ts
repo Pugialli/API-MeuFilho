@@ -5,6 +5,7 @@ import { ZodError } from 'zod'
 
 import prismaPlugin from './plugins/prisma.js'
 import authPlugin from './plugins/auth.js'
+import swaggerPlugin from './plugins/swagger.js'
 import authRoutes from './routes/auth.js'
 import childrenRoutes from './routes/children.js'
 import measurementRoutes from './routes/measurements.js'
@@ -44,6 +45,7 @@ fastify.setErrorHandler((error, _request, reply) => {
 async function bootstrap() {
   await fastify.register(prismaPlugin)
   await fastify.register(authPlugin)
+  await fastify.register(swaggerPlugin)
 
   await fastify.register(authRoutes)
   await fastify.register(childrenRoutes, { prefix: '/children' })
