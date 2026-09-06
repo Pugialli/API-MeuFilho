@@ -1,9 +1,15 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
+import { PrismaNeon } from '@prisma/adapter-neon'
+import { neonConfig } from '@neondatabase/serverless'
+import WebSocket from 'ws'
 import argon2 from 'argon2'
 import { customAlphabet } from 'nanoid'
 
-const prisma = new PrismaClient()
+neonConfig.webSocketConstructor = WebSocket as unknown as typeof globalThis.WebSocket
+
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
 const generateCode = customAlphabet('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 8)
 
 async function main() {

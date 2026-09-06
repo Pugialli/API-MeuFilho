@@ -138,6 +138,13 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 
 ## Changelog
 
+### v1.0.4 — Fix: adapter Neon no seed
+> Setembro 2026
+
+- `prisma/seed.ts`: `PrismaClient` instanciado com `PrismaNeon` adapter — Prisma 7 exige adapter explícito em todos os pontos de uso, inclusive no seed
+
+---
+
 ### v1.0.3 — Documentação Swagger
 > Setembro 2026
 
