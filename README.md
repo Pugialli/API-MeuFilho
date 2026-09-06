@@ -138,6 +138,13 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 
 ## Changelog
 
+### v1.0.2 — Fix: conexão para migrations
+> Setembro 2026
+
+- `prisma.config.ts`: substituído `migrate.adapter` (driver serverless WebSocket) por `datasource.url` com `DATABASE_URL_UNPOOLED` — migrations precisam de conexão TCP direta, não do driver serverless
+
+---
+
 ### v1.0.1 — Migração para pnpm
 > Setembro 2026
 
