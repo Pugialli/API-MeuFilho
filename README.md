@@ -138,6 +138,18 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 
 ## Changelog
 
+### v1.0.1 — Migração para pnpm
+> Setembro 2026
+
+- Migração do package manager de npm para **pnpm@10.30.2**
+- Adicionado campo `packageManager` no `package.json` (Corepack bloqueia `npm install` acidental)
+- Adicionado `pnpm.onlyBuiltDependencies` para aprovar builds nativos de `argon2`, `@prisma/engines`, `esbuild` e `prisma` sem prompt interativo
+- `package-lock.json` removido e substituído por `pnpm-lock.yaml`
+- `.gitignore` atualizado com `package-lock.json`
+- README atualizado com comandos `pnpm`
+
+---
+
 ### v1.0.0 — Estrutura inicial da API
 > Setembro 2026
 
