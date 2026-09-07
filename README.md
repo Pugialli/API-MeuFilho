@@ -45,7 +45,7 @@ API REST para o app MeuFilho, permitindo que dois responsáveis (pai, mãe ou qu
 
 ## Variáveis de ambiente
 
-Crie um arquivo `.env.local` na raiz com as seguintes variáveis:
+Crie um arquivo `.env` na raiz com as seguintes variáveis:
 
 ```env
 # Banco de dados (Neon PostgreSQL)
@@ -65,6 +65,32 @@ NODE_ENV=development
 ```
 
 > **Por que dois DATABASE_URL?** O Neon usa connection pooling (PgBouncer). O Prisma precisa da URL direta (`UNPOOLED`) para rodar migrations e a URL pooled para queries em produção.
+
+---
+
+## Deploy (Vercel)
+
+```bash
+# Instalar a CLI da Vercel
+npm i -g vercel
+
+# Login e deploy (primeira vez)
+vercel
+
+# Deploys seguintes
+vercel --prod
+```
+
+Configure as variáveis de ambiente no painel da Vercel (**Settings → Environment Variables**) com os mesmos valores do `.env`:
+
+- `DATABASE_URL`
+- `DATABASE_URL_UNPOOLED`
+- `JWT_SECRET`
+- `JWT_REFRESH_SECRET`
+- `JWT_EXPIRES_IN`
+- `JWT_REFRESH_EXPIRES_IN`
+
+> **Como funciona:** `vercel.json` roteia todas as requisições para `api/index.ts`, que inicializa o app Fastify como uma função serverless. O `buildCommand` executa `prisma generate` antes do deploy.
 
 ---
 
@@ -137,6 +163,18 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 ---
 
 ## Changelog
+
+### v1.1.0 — Deploy Vercel
+> Setembro 2026
+
+- `src/app.ts` criado — extrai a configuração do Fastify (`buildApp()`) separado do `listen()`
+- `src/server.ts` simplificado — apenas chama `buildApp().listen()` para desenvolvimento local
+- `api/index.ts` criado — handler serverless para Vercel; reutiliza a instância Fastify entre warm starts
+- `vercel.json` criado — roteia todas as requisições para `api/index.ts`, roda `prisma generate` no build
+- `tsconfig.json` atualizado — `rootDir: "."` e `include` expandido para cobrir `api/`
+- README atualizado com instruções de deploy e variáveis de ambiente na Vercel
+
+---
 
 ### v1.0.5 — CORS
 > Setembro 2026
