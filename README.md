@@ -2,6 +2,8 @@
 
 API backend para acompanhamento de **gestação e desenvolvimento do bebê**, compartilhada entre dois responsáveis.
 
+📋 **[Acessar documentação das rotas](https://meu-filho-api.vercel.app/documentation)**
+
 ---
 
 ## Equipe
@@ -163,6 +165,15 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 ---
 
 ## Changelog
+
+### v1.1.1 — Fix: handler Vercel autossuficiente
+> Setembro 2026
+
+- `api/index.ts` refatorado para não importar `src/app.ts` — o Vercel validava o módulo importado como se fosse um handler e reclamava da ausência de default export; agora o handler é autossuficiente com todas as importações diretas
+- Logger desabilitado no handler serverless (Vercel captura stdout/stderr diretamente)
+- Adicionadas env vars na Vercel: `NODE_ENV`, `JWT_EXPIRES_IN`, `JWT_REFRESH_EXPIRES_IN`
+
+---
 
 ### v1.1.0 — Deploy Vercel
 > Setembro 2026
