@@ -21,7 +21,9 @@
       "Bash(pnpm approve-builds *)",
       "Bash(git commit *)",
       "Bash(pnpm tsc *)",
-      "Bash(pnpm add *)"
+      "Bash(pnpm add *)",
+      "Bash(vercel env *)",
+      "Bash(node *)"
     ]
   }
 }

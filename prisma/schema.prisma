@@ -11,6 +11,12 @@ enum Role {
   MAE
 }
 
+enum Sex {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
 enum MeasurementType {
   WEIGHT
   HEIGHT
@@ -35,6 +41,7 @@ model Child {
   id         String    @id @default(cuid())
   name       String?
   dueDate    DateTime?
+  sex        Sex       @default(UNKNOWN)
   inviteCode String    @unique
   createdAt  DateTime  @default(now())
 

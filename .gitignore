@@ -5,3 +5,6 @@ dist/
 .neon
 .env.local
 package-lock.json
+
+.vercel
+.env*

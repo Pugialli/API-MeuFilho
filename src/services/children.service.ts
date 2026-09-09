@@ -1,8 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 import { customAlphabet } from 'nanoid'
-import { CreateChildInput } from '../schemas/children.schema.js'
+import { CreateChildInput, UpdateChildInput } from '../schemas/children.schema.js'
 
 const generateCode = customAlphabet('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 8)
+
+const childSelect = {
+  id: true,
+  name: true,
+  dueDate: true,
+  sex: true,
+  inviteCode: true,
+  createdAt: true,
+} as const
 
 export async function createChild(prisma: PrismaClient, userId: string, input: CreateChildInput) {
   const inviteCode = generateCode()
@@ -11,18 +20,13 @@ export async function createChild(prisma: PrismaClient, userId: string, input: C
     data: {
       name: input.name,
       dueDate: input.dueDate ? new Date(input.dueDate) : undefined,
+      sex: input.sex,
       inviteCode,
       memberships: {
         create: { userId, joinedAt: new Date() },
       },
     },
-    select: {
-      id: true,
-      name: true,
-      dueDate: true,
-      inviteCode: true,
-      createdAt: true,
-    },
+    select: childSelect,
   })
 }
 
@@ -41,7 +45,10 @@ export async function joinChild(prisma: PrismaClient, userId: string, inviteCode
 
   await prisma.childMembership.create({ data: { userId, childId: child.id } })
 
-  return { id: child.id, name: child.name, dueDate: child.dueDate, inviteCode: child.inviteCode }
+  return prisma.child.findUniqueOrThrow({
+    where: { id: child.id },
+    select: childSelect,
+  })
 }
 
 export async function listChildren(prisma: PrismaClient, userId: string) {
@@ -50,11 +57,7 @@ export async function listChildren(prisma: PrismaClient, userId: string) {
     include: {
       child: {
         select: {
-          id: true,
-          name: true,
-          dueDate: true,
-          inviteCode: true,
-          createdAt: true,
+          ...childSelect,
           memberships: {
             include: {
               user: { select: { id: true, name: true, role: true } },
@@ -71,6 +74,51 @@ export async function listChildren(prisma: PrismaClient, userId: string) {
     members: child.memberships.map((m) => ({ ...m.user, joinedAt: m.joinedAt })),
     memberships: undefined,
   }))
+}
+
+export async function getChild(prisma: PrismaClient, userId: string, childId: string) {
+  await assertMembership(prisma, userId, childId)
+
+  const child = await prisma.child.findUnique({
+    where: { id: childId },
+    select: {
+      ...childSelect,
+      memberships: {
+        include: {
+          user: { select: { id: true, name: true, role: true } },
+        },
+      },
+    },
+  })
+
+  if (!child) {
+    throw Object.assign(new Error('Filho não encontrado'), { statusCode: 404 })
+  }
+
+  const { memberships, ...rest } = child
+  return {
+    ...rest,
+    members: memberships.map((m) => ({ ...m.user, joinedAt: m.joinedAt })),
+  }
+}
+
+export async function updateChild(
+  prisma: PrismaClient,
+  userId: string,
+  childId: string,
+  input: UpdateChildInput,
+) {
+  await assertMembership(prisma, userId, childId)
+
+  return prisma.child.update({
+    where: { id: childId },
+    data: {
+      ...(input.name !== undefined && { name: input.name }),
+      ...(input.dueDate !== undefined && { dueDate: new Date(input.dueDate) }),
+      ...(input.sex !== undefined && { sex: input.sex }),
+    },
+    select: childSelect,
+  })
 }
 
 export async function assertMembership(prisma: PrismaClient, userId: string, childId: string) {

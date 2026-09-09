@@ -143,6 +143,8 @@ Requerem `Authorization: Bearer <accessToken>`.
 | POST | `/children` | Criar filho — gera `inviteCode` automaticamente |
 | POST | `/children/join` | Entrar como responsável usando `inviteCode` |
 | GET | `/children` | Listar filhos do usuário autenticado |
+| GET | `/children/:childId` | Buscar filho por ID |
+| PATCH | `/children/:childId` | Editar filho (`name`, `dueDate`, `sex`) — apenas membros |
 
 ### Medições
 
@@ -165,6 +167,16 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 ---
 
 ## Changelog
+
+### v1.2.0 — Campo sexo, edição e busca de filho
+> Setembro 2026
+
+- Campo `sex` adicionado ao modelo `Child` — enum `MALE | FEMALE | UNKNOWN` com default `UNKNOWN`; incluído no retorno de todos os endpoints de filhos
+- `GET /children/:childId` — busca filho por ID, restrito a membros
+- `PATCH /children/:childId` — edita `name`, `dueDate` e/ou `sex` do filho; restrito a membros
+- Múltiplos filhos por usuário já era suportado (sem restrição de limite)
+
+---
 
 ### v1.1.1 — Fix: handler Vercel autossuficiente
 > Setembro 2026
