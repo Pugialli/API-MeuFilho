@@ -27,6 +27,7 @@ const swaggerPlugin: FastifyPluginAsync = fp(async (fastify) => {
 
   await fastify.register(fastifySwaggerUi, {
     routePrefix: '/documentation',
+    theme: { title: 'MeuFilho API' },
     uiConfig: {
       docExpansion: 'list',
       deepLinking: true,
