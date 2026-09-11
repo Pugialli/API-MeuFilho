@@ -1,6 +1,6 @@
 {
   "name": "meufilho-db",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "API de acompanhamento de gestação e bebê",
   "main": "dist/server.js",
   "scripts": {

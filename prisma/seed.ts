@@ -15,7 +15,7 @@ const generateCode = customAlphabet('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 8)
 async function main() {
   console.log('Seeding database...')
 
-  const passwordHash = await argon2.hash('1Leon@rdo1')
+  const passwordHash = await argon2.hash('teste123')
 
   const mae = await prisma.user.upsert({
     where: { email: 'amandaportopadilha@gmail.com' },

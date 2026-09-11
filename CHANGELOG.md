@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3] - 2026-09-11
+
+### Fixed
+- `@fastify/cors`: métodos permitidos agora declarados explicitamente (`GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS`) e `allowedHeaders` inclui `Content-Type` e `Authorization` — corrige preflight CORS bloqueando requisições `PATCH` vindas do browser
+
+---
+
 ## [1.3.2] - 2026-09-11
 
 ### Fixed
