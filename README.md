@@ -164,3 +164,4 @@ Este projeto segue o padrão **Semantic Versioning (semver)**: `MAJOR.MINOR.PATC
 - **MINOR** — novas funcionalidades sem quebrar o que existe
 - **PATCH** — correções de bugs e ajustes menores
 
+> Para o histórico completo de alterações, consulte o [CHANGELOG.md](./CHANGELOG.md).
