@@ -47,6 +47,23 @@ const authRoutes: FastifyPluginAsyncZod = async (fastify) => {
       return reply.send({ data: result })
     },
   )
+
+  fastify.post(
+    '/auth/logout',
+    {
+      schema: {
+        tags: ['Auth'],
+        summary: 'Invalidar refresh token',
+        body: refreshSchema,
+      },
+    },
+    async (request, reply) => {
+      await fastify.prisma.refreshToken.deleteMany({
+        where: { token: request.body.refreshToken },
+      })
+      return reply.send({ ok: true })
+    },
+  )
 }
 
 export default authRoutes

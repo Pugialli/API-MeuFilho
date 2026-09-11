@@ -25,7 +25,7 @@ const authPlugin: FastifyPluginAsync = fp(async (fastify) => {
     try {
       await request.jwtVerify()
     } catch {
-      reply.status(401).send({ error: 'Unauthorized', message: 'Token inválido ou expirado' })
+      return reply.status(401).send({ error: 'Unauthorized', message: 'Token inválido ou expirado' })
     }
   })
 })

@@ -27,6 +27,7 @@ async function buildApp() {
     }
     const fe = error as FastifyError
     const status = fe.statusCode ?? 500
+    if (status >= 500) console.error('[error handler]', error)
     return reply.status(status).send({
       error: status >= 500 ? 'Internal Server Error' : fe.message,
       message: status >= 500 ? 'Erro interno do servidor' : fe.message,
@@ -52,7 +53,24 @@ function getApp() {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  const app = await getApp()
-  await app.ready()
-  app.server.emit('request', req, res)
+  const origin = (req.headers.origin as string) ?? '*'
+
+  try {
+    const app = await getApp()
+    await app.ready()
+    app.server.emit('request', req, res)
+  } catch (error) {
+    console.error('[handler crash]', error)
+    appPromise = null
+    if (!res.headersSent) {
+      res.writeHead(500, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+        'Vary': 'Origin',
+      })
+      res.end(JSON.stringify({ error: 'Internal Server Error', message: 'Erro interno do servidor' }))
+    }
+  }
 }
