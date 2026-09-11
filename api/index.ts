@@ -34,7 +34,11 @@ async function buildApp() {
     })
   })
 
-  await fastify.register(fastifyCors, { origin: true })
+  await fastify.register(fastifyCors, {
+    origin: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
   await fastify.register(prismaPlugin)
   await fastify.register(authPlugin)
   await fastify.register(swaggerPlugin)
