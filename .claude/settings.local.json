@@ -30,7 +30,8 @@
       "PowerShell(ls *)",
       "Bash(Get-ChildItem -Path \"D:\\\\joao_\\\\Documents\\\\Padialli\\\\Sites\\\\MeuFilho\\\\web\" -Force)",
       "Bash(Select-Object Name, FullName)",
-      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['version']\\)\")"
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['version']\\)\")",
+      "Bash(Remove-Item *)"
     ]
   }
 }

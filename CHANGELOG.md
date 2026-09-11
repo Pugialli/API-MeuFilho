@@ -1,13 +1,20 @@
 # Changelog
 
-## [1.3.1] - 2026-09-11
+## [1.3.2] - 2026-09-11
 
 ### Fixed
-- `.vercelignore` criado — exclui `src/app.ts` e `src/server.ts` da detecção de funções serverless da Vercel (erro "Invalid export found in module /var/task/src/app.js")
+- `.vercelignore` removido — excluir `src/app.ts` impedia a compilação TypeScript no build da Vercel, causando erro "No entrypoint found"; o problema original de "Invalid export" já estava resolvido desde v1.1.1
 - `prisma.config.ts`: campo `earlyAccess` removido — não existe mais no tipo `PrismaConfig` do Prisma 7 estável
 
 ### Changed
 - Swagger UI: título da aba do browser alterado para **MeuFilho API** via `theme.title`
+
+---
+
+## [1.3.1] - 2026-09-11
+
+### Fixed
+- `.vercelignore` criado para excluir `src/app.ts` e `src/server.ts` da detecção de funções serverless da Vercel — revertido em v1.3.2
 
 ---
 
